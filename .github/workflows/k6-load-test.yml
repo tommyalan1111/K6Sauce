@@ -1,0 +1,33 @@
+name: Saucedemo Load Test CI
+
+# Định nghĩa thời điểm kích hoạt CI/CD tự động
+on:
+  push:
+    branches: [ "main", "master" ]  # Chạy mỗi khi push code lên nhánh main/master
+  pull_request:
+    branches: [ "main", "master" ]  # Hoặc khi có Pull Request
+  workflow_dispatch:              # Cho phép bấm nút chạy thủ công (Manual Trigger) trên giao diện GitHub
+
+jobs:
+  k6-run:
+    runs-on: ubuntu-latest        # Chạy trên máy ảo Linux của GitHub
+
+    steps:
+      # 1. Kéo source code từ repository xuống máy ảo
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Cài đặt k6 chính thức từ Grafana lên máy ảo GitHub
+      - name: Setup k6 binary
+        uses: grafana/setup-k6-action@v1
+
+      # 3. Chạy kịch bản k6 (Lưu ý: trên Linux/CI ta chạy trực tiếp lệnh 'k6' thay vì '.\k6.exe')
+      - name: Run k6 load test
+        run: k6 run scripts/load-test.js
+
+      # 4. Lưu lại file report.html làm Artifact (để tải về xem sau mỗi lần chạy)
+      - name: Upload Test Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: k6-report-html
+          path: report.html
