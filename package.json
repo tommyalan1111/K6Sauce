@@ -1,0 +1,16 @@
+{
+  "name": "k6sauce",
+  "version": "1.0.0",
+  "description": "Load test for SauceDemo using K6",
+  "main": "index.js",
+  "scripts": {
+    "test:sauce": "k6 run scripts/load-test.js"
+  },
+  "devDependencies": {
+    "k6-reporter": "github:benc-uk/k6-reporter"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs"
+}
