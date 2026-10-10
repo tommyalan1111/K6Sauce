@@ -1,37 +1,31 @@
-import http from 'k6/http';
+import { browser } from 'k6/browser';
 import { check } from 'k6';
 
-export function testSauceDemoFlow() {
-    // 1. Call login page to get cookies
-    // Note: Saucedmo uses client-side rouuting, we could test main pages directly
-    let loginHome = http.get('https://www.saucedemo.com/');
-    check(loginHome, {
-        'status is 200': (r) => r.status === 200,
-    });
+export async function testSauceDemoBrowserFlow() {
+    // Khởi tạo trang mới với await
+    const page = await browser.newPage();
 
-    // 2. Call log in POST request
-    const loginPayload = {
-        user: 'standard_user',
-        password: 'secret_sauce'
-    };
-    
-    let loginRes = http.post('https://www.saucedemo.com/', loginPayload, {
-        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-        redirect: 0 // Disable automatic redirect,
-    });
-    
-    check(loginRes, {
-        'status is 200': (r) => r.status === 200,
-    });
+    try {
+        // 1. Truy cập trang chủ Saucedemo
+        await page.goto('https://www.saucedemo.com/');
 
-    // 3. After get session id, access inventory page
-    let inventoryRes = http.get('https://www.saucedemo.com/inventory.html', {
-        jar: http.cookieJar(), // Automatically add cookies from previous step
-    });
-    check(inventoryRes, {
-        'status is 200': (r) => r.status === 200,
-        'time is less than 1s': (r) => r.timings.duration < 1000,
-    });
-  
+        // 2. Nhập thông tin đăng nhập
+        await page.locator('#user-name').type('standard_user');
+        await page.locator('#password').type('secret_sauce');
 
+        // 3. Click nút login và chờ chuyển hướng
+        await Promise.all([
+            page.waitForNavigation(),
+            page.locator('#login-button').click(),
+        ]);
+
+        // 4. Kiểm tra URL đã vào trang inventory thành công chưa
+        check(page, {
+            'Is inventory page displayed': (p) => p.url().includes('/inventory.html'),
+        });
+
+    } finally {
+        // Đóng trang an toàn bằng await để giải phóng tài nguyên
+        await page.close();
+    }
 }
