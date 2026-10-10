@@ -6,11 +6,15 @@ export  const options = {
     scenarios: {
         ui_flow: {
             executor: 'constant-vus',
-            vus: 5,
+            vus: 2,
             duration: '30s',
             options: {
                 browser: {
                     type: 'chromium',
+                    args: ['--no-sandbox', 
+                        '--disable-dev-shm-usage', 
+                        '--disable-setuid-sandbox'
+                    ],
                 }
             }
         }
