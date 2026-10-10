@@ -13,14 +13,19 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 1. Install K6 and browser
       - name: Setup k6 with Browser support
         uses: grafana/setup-k6-action@v1
         with:
           browser: true
 
-      # 2. Run K6 test script
       - name: Run k6 test
         uses: grafana/run-k6-action@v1
         with:
           path: scripts/load-test.js
+
+      # Create HTML report
+      - name: Upload HTML Test Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: k6-browser-report
+          path: report.html
