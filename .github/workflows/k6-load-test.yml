@@ -2,7 +2,9 @@ name: Run k6 Browser Test
 
 on:
   push:
+    branches: [ "master", "main" ]
   pull_request:
+    branches: [ "master", "main" ]
 
 jobs:
   k6-browser-test:
@@ -11,10 +13,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Run k6 browser test using Docker
-        uses: grafana/run-k6-action@v0.5.0
+      # 1. Install K6 and browser
+      - name: Setup k6 with Browser support
+        uses: grafana/setup-k6-action@v1
         with:
-          path: scripts/load-test.is # Hoặc đường dẫn file load-test của ông
-          flags: --no-usage-report
-        env:
-          K6_BROWSER_ENABLED: "true"
+          browser: true
+
+      # 2. Run K6 test script
+      - name: Run k6 test
+        uses: grafana/run-k6-action@v1
+        with:
+          path: scripts/load-test.js
