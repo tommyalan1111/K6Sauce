@@ -15,7 +15,7 @@ export function testSauceDemoFlow() {
         password: 'secret_sauce'
     };
     
-    let loginRes = http.post('https://www.saucedemo.com/', loginPayLoad, {
+    let loginRes = http.post('https://www.saucedemo.com/', loginPayload, {
         headers: {'Content-Type': 'application/x-www-form-urlencoded'},
         redirect: 0 // Disable automatic redirect,
     });
