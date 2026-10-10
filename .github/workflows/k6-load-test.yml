@@ -11,10 +11,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Run k6 via Docker
-        run: |
-          docker run --rm -i \
-            -v ${{ github.workspace }}:/app \
-            -w /app \
-            grafana/k6:latest \
-            run scripts/load-test.js
+      - name: Run k6 browser test using Docker
+        uses: grafana/run-k6-action@v0.5.0
+        with:
+          path: scripts/load-test.is # Hoặc đường dẫn file load-test của ông
+          flags: --no-usage-report
+        env:
+          K6_BROWSER_ENABLED: "true"
